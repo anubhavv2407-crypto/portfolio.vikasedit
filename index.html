@@ -32,7 +32,6 @@
         .font-heading { font-family: 'Anton', sans-serif; letter-spacing: 0.02em; font-weight: 400; }
         .tracking-tighter { letter-spacing: -0.05em !important; }
         .stroke-text { -webkit-text-stroke: 1.5px rgba(255,255,255,0.15); color: transparent; }
-        .perspective-1000 { perspective: 1000px; }
         
         a, button, .hover-trigger { cursor: none; }
 
@@ -67,9 +66,10 @@
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 20s linear infinite; }
 
-        /* Video Aspect Ratio Fix for Embeds */
-        .video-container { position: relative; width: 100%; height: 100%; z-index: 5; background: black; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        /* Fix Stacking Cards rendering */
+        .work-card { will-change: transform; background: #000; }
+        .video-wrapper { position: relative; width: 100%; height: 100%; z-index: 5; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body class="selection:bg-[#ea580c] selection:text-white">
@@ -251,163 +251,77 @@
                         <!-- Service 1 -->
                         <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
                             <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center mb-6">
-                                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="#ef4444">
-                                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.5v-7l6 3.5z"/>
-                                </svg>
+                                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="#ef4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.5v-7l6 3.5z"/></svg>
                             </div>
                             <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">YouTube Retention</h3>
                             <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Fast-paced, engaging edits specifically designed to maximize viewer retention and algorithm push.</p>
-                            
                             <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
                                 <div class="flex items-center gap-3 mb-4">
-                                    <div class="w-8 h-8 bg-red-600 rounded-md flex items-center justify-center">
-                                        <i data-lucide="play" class="w-4 h-4 text-white fill-white"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="h-2 w-24 bg-neutral-700 rounded-full"></div>
-                                        <div class="h-2 w-16 bg-neutral-800 rounded-full mt-1.5"></div>
-                                    </div>
+                                    <div class="w-8 h-8 bg-red-600 rounded-md flex items-center justify-center"><i data-lucide="play" class="w-4 h-4 text-white fill-white"></i></div>
+                                    <div class="flex-1"><div class="h-2 w-24 bg-neutral-700 rounded-full"></div><div class="h-2 w-16 bg-neutral-800 rounded-full mt-1.5"></div></div>
                                 </div>
                                 <div class="relative h-10 w-full flex items-end gap-1">
                                     <div class="w-full h-full bg-neutral-800 absolute rounded-md"></div>
-                                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
-                                        <path d="M0,35 Q10,5 20,15 T40,20 T60,10 T80,25 T100,15" fill="none" stroke="#ea580c" stroke-width="2" />
-                                        <path d="M0,35 Q10,5 20,15 T40,20 T60,10 T80,25 T100,15 L100,40 L0,40 Z" fill="url(#grad1)" opacity="0.3" />
-                                        <defs>
-                                            <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
-                                                <stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" />
-                                                <stop offset="100%" style="stop-color:#ea580c;stop-opacity:0" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
+                                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0,35 Q10,5 20,15 T40,20 T60,10 T80,25 T100,15" fill="none" stroke="#ea580c" stroke-width="2" /><path d="M0,35 Q10,5 20,15 T40,20 T60,10 T80,25 T100,15 L100,40 L0,40 Z" fill="url(#grad1)" opacity="0.3" /><defs><linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" /><stop offset="100%" style="stop-color:#ea580c;stop-opacity:0" /></linearGradient></defs></svg>
                                 </div>
-                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
-                                    <span>Avg View Duration</span>
-                                    <span class="text-[#ea580c]">85% Retained</span>
-                                </div>
+                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold"><span>Avg View Duration</span><span class="text-[#ea580c]">85% Retained</span></div>
                             </div>
                         </div>
-
+                        
                         <!-- Service 2 -->
                         <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
-                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
-                                <i data-lucide="film" class="w-6 h-6"></i>
-                            </div>
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6"><i data-lucide="film" class="w-6 h-6"></i></div>
                             <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">Cinematic Edits</h3>
                             <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Documentary-style or short film edits with dramatic pacing, music sync, and narrative flow.</p>
-                            
                             <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
-                                <div class="flex items-end gap-2 h-12">
-                                    <div class="w-4 h-6 bg-neutral-700 rounded-sm"></div>
-                                    <div class="w-4 h-10 bg-[#ea580c]/50 rounded-sm"></div>
-                                    <div class="w-4 h-8 bg-neutral-700 rounded-sm"></div>
-                                    <div class="w-4 h-12 bg-[#ea580c] rounded-sm"></div>
-                                    <div class="w-4 h-4 bg-neutral-700 rounded-sm"></div>
-                                    <div class="w-4 h-9 bg-[#ea580c]/30 rounded-sm"></div>
-                                    <div class="w-4 h-11 bg-neutral-700 rounded-sm"></div>
-                                    <div class="w-4 h-7 bg-neutral-700 rounded-sm"></div>
-                                </div>
-                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
-                                    <span>Sequence Sync</span>
-                                    <span class="text-[#ea580c]">24 FPS</span>
-                                </div>
+                                <div class="flex items-end gap-2 h-12"><div class="w-4 h-6 bg-neutral-700 rounded-sm"></div><div class="w-4 h-10 bg-[#ea580c]/50 rounded-sm"></div><div class="w-4 h-8 bg-neutral-700 rounded-sm"></div><div class="w-4 h-12 bg-[#ea580c] rounded-sm"></div><div class="w-4 h-4 bg-neutral-700 rounded-sm"></div><div class="w-4 h-9 bg-[#ea580c]/30 rounded-sm"></div><div class="w-4 h-11 bg-neutral-700 rounded-sm"></div><div class="w-4 h-7 bg-neutral-700 rounded-sm"></div></div>
+                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold"><span>Sequence Sync</span><span class="text-[#ea580c]">24 FPS</span></div>
                             </div>
                         </div>
 
                         <!-- Service 3 -->
                         <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
-                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
-                                <i data-lucide="palette" class="w-6 h-6"></i>
-                            </div>
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6"><i data-lucide="palette" class="w-6 h-6"></i></div>
                             <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">Color Grading</h3>
                             <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Professional color correction and cinematic grading to give your footage a high-end, premium look.</p>
-                            
                             <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
-                                <div class="flex items-center justify-around mb-2">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-red-900 via-neutral-800 to-red-500 border-2 border-[#ea580c]/30 shadow-inner"></div>
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-900 via-neutral-800 to-green-500 border-2 border-[#ea580c]/30 shadow-inner"></div>
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-900 via-neutral-800 to-blue-500 border-2 border-[#ea580c]/30 shadow-inner"></div>
-                                </div>
-                                <div class="flex justify-between mt-2 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
-                                    <span>Shadows / Mids / Highs</span>
-                                    <span class="text-[#ea580c]">LUT Applied</span>
-                                </div>
+                                <div class="flex items-center justify-around mb-2"><div class="w-10 h-10 rounded-full bg-gradient-to-tr from-red-900 via-neutral-800 to-red-500 border-2 border-[#ea580c]/30 shadow-inner"></div><div class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-900 via-neutral-800 to-green-500 border-2 border-[#ea580c]/30 shadow-inner"></div><div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-900 via-neutral-800 to-blue-500 border-2 border-[#ea580c]/30 shadow-inner"></div></div>
+                                <div class="flex justify-between mt-2 text-[10px] text-neutral-500 uppercase tracking-widest font-bold"><span>Shadows / Mids / Highs</span><span class="text-[#ea580c]">LUT Applied</span></div>
                             </div>
                         </div>
 
                         <!-- Service 4 -->
                         <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
-                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
-                                <i data-lucide="volume-2" class="w-6 h-6"></i>
-                            </div>
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6"><i data-lucide="volume-2" class="w-6 h-6"></i></div>
                             <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">Sound Design</h3>
                             <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Immersive sound effects, ambient noise, and perfect audio mixing to elevate the visual experience.</p>
-                            
                             <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
-                                <div class="flex items-center justify-center gap-1 h-12">
-                                    <div class="w-1 h-4 bg-[#ea580c] rounded-full"></div>
-                                    <div class="w-1 h-8 bg-[#ea580c] rounded-full"></div>
-                                    <div class="w-1 h-12 bg-[#ea580c] rounded-full"></div>
-                                    <div class="w-1 h-6 bg-[#ea580c]/80 rounded-full"></div>
-                                    <div class="w-1 h-10 bg-[#ea580c] rounded-full"></div>
-                                    <div class="w-1 h-3 bg-[#ea580c]/50 rounded-full"></div>
-                                    <div class="w-1 h-9 bg-[#ea580c] rounded-full"></div>
-                                    <div class="w-1 h-7 bg-[#ea580c]/70 rounded-full"></div>
-                                    <div class="w-1 h-11 bg-[#ea580c] rounded-full"></div>
-                                    <div class="w-1 h-5 bg-[#ea580c]/40 rounded-full"></div>
-                                    <div class="w-1 h-8 bg-[#ea580c] rounded-full"></div>
-                                    <div class="w-1 h-12 bg-[#ea580c] rounded-full"></div>
-                                </div>
-                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
-                                    <span>Audio Mix</span>
-                                    <span class="text-[#ea580c]">-6dB</span>
-                                </div>
+                                <div class="flex items-center justify-center gap-1 h-12"><div class="w-1 h-4 bg-[#ea580c] rounded-full"></div><div class="w-1 h-8 bg-[#ea580c] rounded-full"></div><div class="w-1 h-12 bg-[#ea580c] rounded-full"></div><div class="w-1 h-6 bg-[#ea580c]/80 rounded-full"></div><div class="w-1 h-10 bg-[#ea580c] rounded-full"></div><div class="w-1 h-3 bg-[#ea580c]/50 rounded-full"></div><div class="w-1 h-9 bg-[#ea580c] rounded-full"></div><div class="w-1 h-7 bg-[#ea580c]/70 rounded-full"></div><div class="w-1 h-11 bg-[#ea580c] rounded-full"></div><div class="w-1 h-5 bg-[#ea580c]/40 rounded-full"></div><div class="w-1 h-8 bg-[#ea580c] rounded-full"></div><div class="w-1 h-12 bg-[#ea580c] rounded-full"></div></div>
+                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold"><span>Audio Mix</span><span class="text-[#ea580c]">-6dB</span></div>
                             </div>
                         </div>
 
                         <!-- Service 5 -->
                         <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
-                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
-                                <i data-lucide="sparkles" class="w-6 h-6"></i>
-                            </div>
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
                             <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">VFX & Motion</h3>
                             <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Custom motion graphics, text animations, and visual effects to keep the screen dynamic and alive.</p>
-                            
                             <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
                                 <div class="relative h-12 w-full flex items-center">
-                                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
-                                        <path d="M0,35 Q50,0 100,35" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4" />
-                                        <circle cx="0" cy="35" r="3" fill="#fff" />
-                                        <circle cx="50" cy="5" r="3" fill="#ea580c" />
-                                        <circle cx="100" cy="35" r="3" fill="#fff" />
-                                    </svg>
+                                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0,35 Q50,0 100,35" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4" /><circle cx="0" cy="35" r="3" fill="#fff" /><circle cx="50" cy="5" r="3" fill="#ea580c" /><circle cx="100" cy="35" r="3" fill="#fff" /></svg>
                                 </div>
-                                <div class="flex justify-between mt-2 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
-                                    <span>Motion Path</span>
-                                    <span class="text-[#ea580c]">Keyframed</span>
-                                </div>
+                                <div class="flex justify-between mt-2 text-[10px] text-neutral-500 uppercase tracking-widest font-bold"><span>Motion Path</span><span class="text-[#ea580c]">Keyframed</span></div>
                             </div>
                         </div>
 
                         <!-- Service 6 -->
                         <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
-                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
-                                <i data-lucide="target" class="w-6 h-6"></i>
-                            </div>
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6"><i data-lucide="target" class="w-6 h-6"></i></div>
                             <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">Ad Campaigns</h3>
                             <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">High-converting video ads for Facebook, Instagram, and YouTube, optimized for marketing goals.</p>
-                            
                             <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
-                                <div class="flex items-end gap-2 h-12 justify-center">
-                                    <div class="w-10 h-4 bg-neutral-700 rounded-sm"></div>
-                                    <div class="w-10 h-6 bg-neutral-600 rounded-sm"></div>
-                                    <div class="w-10 h-8 bg-neutral-500 rounded-sm"></div>
-                                    <div class="w-10 h-12 bg-[#ea580c] rounded-sm"></div>
-                                </div>
-                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
-                                    <span>Conversion</span>
-                                    <span class="text-[#ea580c]">3x ROAS</span>
-                                </div>
+                                <div class="flex items-end gap-2 h-12 justify-center"><div class="w-10 h-4 bg-neutral-700 rounded-sm"></div><div class="w-10 h-6 bg-neutral-600 rounded-sm"></div><div class="w-10 h-8 bg-neutral-500 rounded-sm"></div><div class="w-10 h-12 bg-[#ea580c] rounded-sm"></div></div>
+                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold"><span>Conversion</span><span class="text-[#ea580c]">3x ROAS</span></div>
                             </div>
                         </div>
                     </div>
@@ -418,150 +332,108 @@
             <section class="py-20 md:py-24 bg-[#020000] border-t border-neutral-900 relative overflow-hidden">
                 <div class="container mx-auto px-6 md:px-12 max-w-[1400px] relative z-10">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
-                        <div class="gsap-reveal opacity-0 translate-y-[50px]">
-                            <div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">500+</div>
-                            <div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Videos Delivered</div>
-                        </div>
-                        <div class="gsap-reveal opacity-0 translate-y-[50px]">
-                            <div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">5+</div>
-                            <div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Years Experience</div>
-                        </div>
-                        <div class="gsap-reveal opacity-0 translate-y-[50px]">
-                            <div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">10M+</div>
-                            <div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Total Views</div>
-                        </div>
-                        <div class="gsap-reveal opacity-0 translate-y-[50px]">
-                            <div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">120+</div>
-                            <div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Happy Clients</div>
-                        </div>
+                        <div class="gsap-reveal opacity-0 translate-y-[50px]"><div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">500+</div><div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Videos Delivered</div></div>
+                        <div class="gsap-reveal opacity-0 translate-y-[50px]"><div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">5+</div><div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Years Experience</div></div>
+                        <div class="gsap-reveal opacity-0 translate-y-[50px]"><div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">10M+</div><div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Total Views</div></div>
+                        <div class="gsap-reveal opacity-0 translate-y-[50px]"><div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">120+</div><div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Happy Clients</div></div>
                     </div>
                 </div>
             </section>
 
-            <!-- 8. Selected Works (Smooth Stacking & Proper Thumbnails) -->
+            <!-- 8. Selected Works (Simple Click-to-Play & Smooth Stacking Fixed) -->
             <section id="work" class="bg-[#0a0a0a] border-t border-neutral-900 relative pb-[40vh]">
                 <div class="text-center pt-24 pb-12 md:pt-32 md:pb-20 relative z-10">
-                    <p class="text-neutral-400 mb-4 text-sm md:text-lg font-medium tracking-wide">Click play to watch. Scroll down to pause.</p>
+                    <p class="text-neutral-400 mb-4 text-sm md:text-lg font-medium tracking-wide">Click play to watch with sound.</p>
                     <h2 class="text-5xl md:text-[8rem] font-heading tracking-wider text-white leading-none uppercase">SELECTED <br/> <span class="text-[#ea580c]">WORKS</span></h2>
                 </div>
 
                 <div class="flex flex-col items-center w-full">
                     <!-- Project 1 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-10 overflow-hidden">
-                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10 bg-black">
-                            <div class="video-container">
-                                <iframe src="https://www.youtube.com/embed/lG9X64PBL9s?enablejsapi=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
+                            <div class="video-wrapper">
+                                <iframe id="iframe1" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                             </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black">
-                                <img src="https://img.youtube.com/vi/lG9X64PBL9s/maxresdefault.jpg" class="absolute inset-0 w-full h-full object-cover opacity-80" />
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe1', 'lG9X64PBL9s', this)">
+                                <img src="https://img.youtube.com/vi/lG9X64PBL9s/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/lG9X64PBL9s/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
-                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]">
-                                    <i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i>
-                                </div>
-                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none">
-                                    <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
-                                    <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Alpha</h3>
-                                </div>
+                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
+                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none"><p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p><h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Alpha</h3></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Project 2 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-20 overflow-hidden">
-                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10 bg-black">
-                            <div class="video-container">
-                                <iframe src="https://www.youtube.com/embed/fPBbNYIX_AQ?enablejsapi=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
+                            <div class="video-wrapper">
+                                <iframe id="iframe2" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                             </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black">
-                                <img src="https://img.youtube.com/vi/fPBbNYIX_AQ/maxresdefault.jpg" class="absolute inset-0 w-full h-full object-cover opacity-80" />
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe2', 'fPBbNYIX_AQ', this)">
+                                <img src="https://img.youtube.com/vi/fPBbNYIX_AQ/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/fPBbNYIX_AQ/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
-                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]">
-                                    <i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i>
-                                </div>
-                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none">
-                                    <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
-                                    <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Beta</h3>
-                                </div>
+                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
+                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none"><p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p><h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Beta</h3></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Project 3 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-30 overflow-hidden">
-                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10 bg-black">
-                            <div class="video-container">
-                                <iframe src="https://www.youtube.com/embed/gcZV7XHHUZU?enablejsapi=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
+                            <div class="video-wrapper">
+                                <iframe id="iframe3" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                             </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black">
-                                <img src="https://img.youtube.com/vi/gcZV7XHHUZU/maxresdefault.jpg" class="absolute inset-0 w-full h-full object-cover opacity-80" />
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe3', 'gcZV7XHHUZU', this)">
+                                <img src="https://img.youtube.com/vi/gcZV7XHHUZU/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/gcZV7XHHUZU/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
-                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]">
-                                    <i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i>
-                                </div>
-                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none">
-                                    <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
-                                    <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Gamma</h3>
-                                </div>
+                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
+                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none"><p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p><h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Gamma</h3></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Project 4 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-40 overflow-hidden">
-                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10 bg-black">
-                            <div class="video-container">
-                                <iframe src="https://www.youtube.com/embed/Lby8e8YZUw4?enablejsapi=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
+                            <div class="video-wrapper">
+                                <iframe id="iframe4" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                             </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black">
-                                <img src="https://img.youtube.com/vi/Lby8e8YZUw4/maxresdefault.jpg" class="absolute inset-0 w-full h-full object-cover opacity-80" />
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe4', 'Lby8e8YZUw4', this)">
+                                <img src="https://img.youtube.com/vi/Lby8e8YZUw4/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/Lby8e8YZUw4/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
-                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]">
-                                    <i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i>
-                                </div>
-                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none">
-                                    <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
-                                    <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Delta</h3>
-                                </div>
+                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
+                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none"><p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p><h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Delta</h3></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Project 5 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-50 overflow-hidden">
-                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10 bg-black">
-                            <div class="video-container">
-                                <iframe src="https://www.youtube.com/embed/LihED73oz80?enablejsapi=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
+                            <div class="video-wrapper">
+                                <iframe id="iframe5" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                             </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black">
-                                <img src="https://img.youtube.com/vi/LihED73oz80/maxresdefault.jpg" class="absolute inset-0 w-full h-full object-cover opacity-80" />
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe5', 'LihED73oz80', this)">
+                                <img src="https://img.youtube.com/vi/LihED73oz80/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/LihED73oz80/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
-                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]">
-                                    <i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i>
-                                </div>
-                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none">
-                                    <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
-                                    <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Epsilon</h3>
-                                </div>
+                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
+                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none"><p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p><h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Epsilon</h3></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Project 6 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-[60] overflow-hidden">
-                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10 bg-black">
-                            <div class="video-container">
-                                <iframe src="https://www.youtube.com/embed/ztRvrYn1AJk?enablejsapi=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
+                            <div class="video-wrapper">
+                                <iframe id="iframe6" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                             </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black">
-                                <img src="https://img.youtube.com/vi/ztRvrYn1AJk/maxresdefault.jpg" class="absolute inset-0 w-full h-full object-cover opacity-80" />
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe6', 'ztRvrYn1AJk', this)">
+                                <img src="https://img.youtube.com/vi/ztRvrYn1AJk/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/ztRvrYn1AJk/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
-                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]">
-                                    <i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i>
-                                </div>
-                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none">
-                                    <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
-                                    <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Zeta</h3>
-                                </div>
+                                <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
+                                <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10 pointer-events-none"><p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p><h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Zeta</h3></div>
                             </div>
                         </div>
                     </div>
@@ -575,41 +447,21 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="lg:sticky lg:top-24">
                             <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs mb-4 gsap-reveal opacity-0 translate-y-[50px]">Agency Experience</p>
-                            <h2 class="text-6xl md:text-8xl font-heading text-white uppercase tracking-wider leading-none mb-8 gsap-reveal opacity-0 translate-y-[50px]">
-                                HEAD OF <br/> <span class="text-[#ea580c]">VIDEO</span> <br/> EDITING
-                            </h2>
-                            <p class="text-neutral-400 text-lg font-medium leading-relaxed max-w-md gsap-reveal opacity-0 translate-y-[50px]">
-                                Leading the creative charge at a top-tier agency. Proven track record of delivering high-impact content at scale.
-                            </p>
+                            <h2 class="text-6xl md:text-8xl font-heading text-white uppercase tracking-wider leading-none mb-8 gsap-reveal opacity-0 translate-y-[50px]">HEAD OF <br/> <span class="text-[#ea580c]">VIDEO</span> <br/> EDITING</h2>
+                            <p class="text-neutral-400 text-lg font-medium leading-relaxed max-w-md gsap-reveal opacity-0 translate-y-[50px]">Leading the creative charge at a top-tier agency. Proven track record of delivering high-impact content at scale.</p>
                         </div>
-                        
                         <div class="bg-[#0f0f0f] border border-neutral-800 rounded-3xl p-8 md:p-12 gsap-reveal opacity-0 translate-y-[50px] relative overflow-hidden group hover:border-[#ea580c]/40 transition-colors duration-500">
                             <div class="absolute -top-10 -right-10 font-heading text-[150px] text-white/[0.02] group-hover:text-[#ea580c]/[0.05] transition-colors duration-500 select-none leading-none">VX</div>
                             <div class="relative z-10">
                                 <div class="flex items-center justify-between mb-8 pb-8 border-b border-neutral-800">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-[#ea580c] rounded-md flex items-center justify-center text-black font-heading text-2xl">V</div>
-                                        <span class="text-3xl md:text-4xl font-heading text-white tracking-wider">VEDONYX</span>
-                                    </div>
-                                    <a href="https://vedonyx.com" target="_blank" class="text-xs text-neutral-400 hover:text-[#ea580c] transition-colors border border-neutral-700 hover:border-[#ea580c] px-4 py-2 rounded-full font-bold uppercase tracking-widest flex items-center gap-2 hover-trigger">
-                                        Visit <i data-lucide="external-link" class="w-3 h-3"></i>
-                                    </a>
+                                    <div class="flex items-center gap-3"><div class="w-12 h-12 bg-[#ea580c] rounded-md flex items-center justify-center text-black font-heading text-2xl">V</div><span class="text-3xl md:text-4xl font-heading text-white tracking-wider">VEDONYX</span></div>
+                                    <a href="https://vedonyx.com" target="_blank" class="text-xs text-neutral-400 hover:text-[#ea580c] transition-colors border border-neutral-700 hover:border-[#ea580c] px-4 py-2 rounded-full font-bold uppercase tracking-widest flex items-center gap-2 hover-trigger">Visit <i data-lucide="external-link" class="w-3 h-3"></i></a>
                                 </div>
-                                <p class="text-neutral-300 text-lg md:text-xl leading-relaxed mb-6">
-                                    Currently serving as the <span class="text-[#ea580c] font-bold">Head of Video Editing</span> at Vedonyx, a premier creative agency.
-                                </p>
-                                <p class="text-neutral-400 text-base leading-relaxed mb-8">
-                                    For the past <span class="text-white font-bold">2+ years</span>, I've been steering the video editing department, ensuring top-tier cinematic quality, managing a team of talented editors, and delivering exceptional visual stories for high-profile clients globally.
-                                </p>
+                                <p class="text-neutral-300 text-lg md:text-xl leading-relaxed mb-6">Currently serving as the <span class="text-[#ea580c] font-bold">Head of Video Editing</span> at Vedonyx, a premier creative agency.</p>
+                                <p class="text-neutral-400 text-base leading-relaxed mb-8">For the past <span class="text-white font-bold">2+ years</span>, I've been steering the video editing department, ensuring top-tier cinematic quality, managing a team of talented editors, and delivering exceptional visual stories for high-profile clients globally.</p>
                                 <div class="grid grid-cols-2 gap-6">
-                                    <div class="border-l-2 border-[#ea580c] pl-4">
-                                        <div class="text-3xl font-heading text-white">2+ Years</div>
-                                        <div class="text-xs text-neutral-500 uppercase tracking-widest mt-1">Leadership Role</div>
-                                    </div>
-                                    <div class="border-l-2 border-neutral-700 pl-4">
-                                        <div class="text-3xl font-heading text-white">Team Lead</div>
-                                        <div class="text-xs text-neutral-500 uppercase tracking-widest mt-1">Creative Direction</div>
-                                    </div>
+                                    <div class="border-l-2 border-[#ea580c] pl-4"><div class="text-3xl font-heading text-white">2+ Years</div><div class="text-xs text-neutral-500 uppercase tracking-widest mt-1">Leadership Role</div></div>
+                                    <div class="border-l-2 border-neutral-700 pl-4"><div class="text-3xl font-heading text-white">Team Lead</div><div class="text-xs text-neutral-500 uppercase tracking-widest mt-1">Creative Direction</div></div>
                                 </div>
                             </div>
                         </div>
@@ -624,70 +476,39 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
                         <div class="lg:sticky lg:top-0 lg:h-screen flex flex-col justify-center">
                             <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs mb-4 gsap-reveal opacity-0 translate-y-[50px]">Workflow to Excellence</p>
-                            <h2 class="text-6xl md:text-8xl font-heading text-white uppercase tracking-wider leading-none mb-8 gsap-reveal opacity-0 translate-y-[50px]">
-                                The <br/> <span class="text-[#ea580c]">Process</span>
-                            </h2>
-                            <p class="text-neutral-400 max-w-md text-lg font-medium leading-relaxed gsap-reveal opacity-0 translate-y-[50px]">
-                                A meticulous journey from raw footage to cinematic masterpiece. Every frame is engineered for maximum retention and emotional impact.
-                            </p>
-                            <div class="mt-8 flex items-center gap-4 text-neutral-500 text-sm gsap-reveal opacity-0 translate-y-[50px]">
-                                <div class="h-[2px] w-12 bg-[#ea580c]"></div>
-                                <span class="uppercase tracking-widest font-bold">4 Steps to Perfection</span>
-                            </div>
+                            <h2 class="text-6xl md:text-8xl font-heading text-white uppercase tracking-wider leading-none mb-8 gsap-reveal opacity-0 translate-y-[50px]">The <br/> <span class="text-[#ea580c]">Process</span></h2>
+                            <p class="text-neutral-400 max-w-md text-lg font-medium leading-relaxed gsap-reveal opacity-0 translate-y-[50px]">A meticulous journey from raw footage to cinematic masterpiece. Every frame is engineered for maximum retention and emotional impact.</p>
+                            <div class="mt-8 flex items-center gap-4 text-neutral-500 text-sm gsap-reveal opacity-0 translate-y-[50px]"><div class="h-[2px] w-12 bg-[#ea580c]"></div><span class="uppercase tracking-widest font-bold">4 Steps to Perfection</span></div>
                         </div>
-
                         <div class="flex flex-col gap-6 lg:py-32">
                             <div class="process-card group relative p-8 md:p-10 bg-[#0f0f0f] border border-neutral-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-[#ea580c]/50 hover:bg-[#111] gsap-reveal opacity-0 translate-y-[50px]">
                                 <div class="absolute -top-6 -right-2 font-heading text-[120px] text-white/[0.03] group-hover:text-[#ea580c]/10 transition-colors duration-500 select-none leading-none">01</div>
                                 <div class="relative z-10">
-                                    <div class="flex items-center gap-4 mb-6">
-                                        <div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]">
-                                            <i data-lucide="aperture" class="w-5 h-5"></i>
-                                        </div>
-                                        <span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">01 - DISCOVERY</span>
-                                    </div>
+                                    <div class="flex items-center gap-4 mb-6"><div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]"><i data-lucide="aperture" class="w-5 h-5"></i></div><span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">01 - DISCOVERY</span></div>
                                     <h3 class="text-3xl md:text-4xl font-heading text-white mb-4 uppercase tracking-wide">The Blueprint</h3>
                                     <p class="text-neutral-400 text-base md:text-lg font-medium leading-relaxed">Understanding the raw footage and setting the narrative framework. We define the pacing, tone, and visual style before a single cut is made.</p>
                                 </div>
                             </div>
-
                             <div class="process-card group relative p-8 md:p-10 bg-[#0f0f0f] border border-neutral-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-[#ea580c]/50 hover:bg-[#111] gsap-reveal opacity-0 translate-y-[50px]">
                                 <div class="absolute -top-6 -right-2 font-heading text-[120px] text-white/[0.03] group-hover:text-[#ea580c]/10 transition-colors duration-500 select-none leading-none">02</div>
                                 <div class="relative z-10">
-                                    <div class="flex items-center gap-4 mb-6">
-                                        <div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]">
-                                            <i data-lucide="zap" class="w-5 h-5"></i>
-                                        </div>
-                                        <span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">02 - PACING</span>
-                                    </div>
+                                    <div class="flex items-center gap-4 mb-6"><div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]"><i data-lucide="zap" class="w-5 h-5"></i></div><span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">02 - PACING</span></div>
                                     <h3 class="text-3xl md:text-4xl font-heading text-white mb-4 uppercase tracking-wide">Rhythm & Flow</h3>
                                     <p class="text-neutral-400 text-base md:text-lg font-medium leading-relaxed">Cutting the dead space and establishing a solid, engaging flow. This is where the video finds its heartbeat and keeps the audience hooked.</p>
                                 </div>
                             </div>
-
                             <div class="process-card group relative p-8 md:p-10 bg-[#0f0f0f] border border-neutral-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-[#ea580c]/50 hover:bg-[#111] gsap-reveal opacity-0 translate-y-[50px]">
                                 <div class="absolute -top-6 -right-2 font-heading text-[120px] text-white/[0.03] group-hover:text-[#ea580c]/10 transition-colors duration-500 select-none leading-none">03</div>
                                 <div class="relative z-10">
-                                    <div class="flex items-center gap-4 mb-6">
-                                        <div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]">
-                                            <i data-lucide="layers" class="w-5 h-5"></i>
-                                        </div>
-                                        <span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">03 - VISUALS</span>
-                                    </div>
+                                    <div class="flex items-center gap-4 mb-6"><div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]"><i data-lucide="layers" class="w-5 h-5"></i></div><span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">03 - VISUALS</span></div>
                                     <h3 class="text-3xl md:text-4xl font-heading text-white mb-4 uppercase tracking-wide">Visual Engineering</h3>
                                     <p class="text-neutral-400 text-base md:text-lg font-medium leading-relaxed">The magic of VFX, motion graphics, and cinematic color grading. We enhance the visual aesthetic to create a truly immersive experience.</p>
                                 </div>
                             </div>
-
                             <div class="process-card group relative p-8 md:p-10 bg-[#0f0f0f] border border-neutral-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-[#ea580c]/50 hover:bg-[#111] gsap-reveal opacity-0 translate-y-[50px]">
                                 <div class="absolute -top-6 -right-2 font-heading text-[120px] text-white/[0.03] group-hover:text-[#ea580c]/10 transition-colors duration-500 select-none leading-none">04</div>
                                 <div class="relative z-10">
-                                    <div class="flex items-center gap-4 mb-6">
-                                        <div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]">
-                                            <i data-lucide="music" class="w-5 h-5"></i>
-                                        </div>
-                                        <span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">04 - SOUND</span>
-                                    </div>
+                                    <div class="flex items-center gap-4 mb-6"><div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]"><i data-lucide="music" class="w-5 h-5"></i></div><span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">04 - SOUND</span></div>
                                     <h3 class="text-3xl md:text-4xl font-heading text-white mb-4 uppercase tracking-wide">Sonic Immersion</h3>
                                     <p class="text-neutral-400 text-base md:text-lg font-medium leading-relaxed">Breathing life into the video with SFX, ambient sound, and music. Sound is 50% of the experience, and we make every beat count.</p>
                                 </div>
@@ -699,9 +520,7 @@
 
             <!-- 11. Reviews Marquee -->
             <section class="py-20 md:py-40 bg-[#0a0a0a] border-t border-neutral-900 overflow-hidden relative z-20">
-                <div class="container mx-auto px-6 text-center mb-20">
-                    <h2 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Client <span class="text-[#ea580c]">Reviews</span></h2>
-                </div>
+                <div class="container mx-auto px-6 text-center mb-20"><h2 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Client <span class="text-[#ea580c]">Reviews</span></h2></div>
                 <div class="relative w-full flex overflow-hidden">
                     <div class="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none"></div>
                     <div class="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none"></div>
@@ -748,7 +567,6 @@
     <footer class="fixed bottom-0 left-0 w-full h-[80vh] md:h-[90vh] bg-[#020000] text-white z-0 flex flex-col justify-between pt-24 pb-10 px-6 md:px-12 overflow-hidden border-t border-[#ea580c]/10">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[150vw] md:w-[100vw] h-[100vw] bg-[#ea580c]/[0.05] rounded-full blur-[150px] pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-[#c23300]/10 to-transparent pointer-events-none"></div>
-
         <div class="container mx-auto flex flex-col items-center text-center relative z-10">
             <p class="font-bold tracking-[0.3em] uppercase mb-4 text-[#ea580c]">Next Step?</p>
             <h2 class="text-[12vw] leading-none font-heading tracking-wider uppercase mb-8 text-white drop-shadow-[0_0_50px_rgba(234,88,12,0.5)]">LET'S TALK</h2>
@@ -757,25 +575,14 @@
                 <div class="absolute inset-0 w-full h-full bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-0"></div>
                 <span class="relative z-10 font-bold uppercase tracking-widest text-sm transition-colors duration-500 flex items-center gap-3">Start a Project <i data-lucide="arrow-up-right" class="w-5 h-5"></i></span>
             </a>
-            
             <div class="mt-12 flex flex-col md:flex-row items-center gap-6 md:gap-12 text-neutral-400">
-                <a href="mailto:vikasclan8@gmail.com" class="flex items-center gap-2 hover:text-[#ea580c] transition-colors duration-300 hover-trigger">
-                    <i data-lucide="mail" class="w-4 h-4"></i>
-                    <span class="text-sm font-bold tracking-wide">vikasclan8@gmail.com</span>
-                </a>
+                <a href="mailto:vikasclan8@gmail.com" class="flex items-center gap-2 hover:text-[#ea580c] transition-colors duration-300 hover-trigger"><i data-lucide="mail" class="w-4 h-4"></i><span class="text-sm font-bold tracking-wide">vikasclan8@gmail.com</span></a>
                 <div class="hidden md:block w-[1px] h-4 bg-neutral-700"></div>
-                <a href="tel:+918287293938" class="flex items-center gap-2 hover:text-[#ea580c] transition-colors duration-300 hover-trigger">
-                    <i data-lucide="phone" class="w-4 h-4"></i>
-                    <span class="text-sm font-bold tracking-wide">+91 82872 93938</span>
-                </a>
+                <a href="tel:+918287293938" class="flex items-center gap-2 hover:text-[#ea580c] transition-colors duration-300 hover-trigger"><i data-lucide="phone" class="w-4 h-4"></i><span class="text-sm font-bold tracking-wide">+91 82872 93938</span></a>
             </div>
         </div>
-
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-end border-t border-[#ea580c]/20 pt-8 mt-auto relative z-10">
-            <div class="mb-6 md:mb-0 text-center md:text-left">
-                <p class="font-heading text-5xl tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(234,88,12,0.3)]">VIKAS.</p>
-                <p class="font-bold text-white/40 mt-1 uppercase text-xs tracking-[0.2em]">Visual Engineer © 2026</p>
-            </div>
+            <div class="mb-6 md:mb-0 text-center md:text-left"><p class="font-heading text-5xl tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(234,88,12,0.3)]">VIKAS.</p><p class="font-bold text-white/40 mt-1 uppercase text-xs tracking-[0.2em]">Visual Engineer © 2026</p></div>
             <div class="flex gap-8 font-bold uppercase tracking-[0.2em] text-xs">
                 <a href="https://wa.me/918287293938?text=Hi%20I%20just%20viewed%20your%20portfolio.%20I%27d%20like%20to%20discuss%20a%20video%20editing%20project." target="_blank" class="hover:text-[#ea580c] text-white/60 transition-colors duration-300 hover-trigger">WhatsApp</a>
                 <a href="https://www.instagram.com" target="_blank" class="hover:text-[#ea580c] text-white/60 transition-colors duration-300 hover-trigger">Instagram</a>
@@ -864,22 +671,20 @@
                 scrollTrigger: { trigger: "#about", start: "top bottom", end: "bottom top", scrub: 1 }
             });
 
-            // --- SMOOTH STACKING WORKS SECTION ---
+            // --- SIMPLE & SMOOTH STACKING WORKS SECTION (NO OPACITY/FILTERS = NO BLACK SCREEN) ---
             const cards = document.querySelectorAll('.work-card-container');
             cards.forEach((container, i) => {
                 const card = container.querySelector('.work-card');
-                // If it's not the last card, scale it down when the next card covers it
                 if (i < cards.length - 1) {
                     gsap.to(card, {
                         scale: 0.85, 
-                        opacity: 0.6, 
-                        filter: "brightness(0.6)",
+                        // NO opacity or filter changes to prevent iframe black screen bug
                         transformOrigin: "top center",
                         scrollTrigger: {
-                            trigger: cards[i+1], // Trigger when the NEXT card enters
+                            trigger: cards[i+1], 
                             start: "top bottom", 
                             end: "top top", 
-                            scrub: 1,
+                            scrub: 1, 
                         }
                     });
                 }
@@ -891,37 +696,15 @@
                     { y: 0, opacity: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 90%" } }
                 );
             });
+        }
 
-            // --- YOUTUBE VIDEO PLAY & PAUSE ON SCROLL LOGIC ---
-            const videoObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const card = entry.target;
-                    const iframe = card.querySelector('iframe');
-                    const overlay = card.querySelector('.play-overlay');
-                    // If card is out of view (scroll down/up)
-                    if (!entry.isIntersecting && iframe) {
-                        // Send pause command to YouTube iframe
-                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                        // Bring overlay back up so user can click play again if they return
-                        if (overlay) overlay.style.display = 'flex';
-                    }
-                });
-            }, { threshold: 0.4 }); // Trigger when 40% of card is out of view
-
-            document.querySelectorAll('.work-card').forEach(card => {
-                videoObserver.observe(card);
-                
-                const overlay = card.querySelector('.play-overlay');
-                const iframe = card.querySelector('iframe');
-                
-                if (overlay && iframe) {
-                    overlay.addEventListener('click', function() {
-                        this.style.display = 'none'; // Hide play button
-                        // Send play command to YouTube iframe
-                        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                    });
-                }
-            });
+        // --- SIMPLE CLICK TO PLAY LOGIC ---
+        window.playVideo = function(iframeId, videoId, overlay) {
+            const iframe = document.getElementById(iframeId);
+            // Load the iframe with autoplay enabled
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+            // Hide the thumbnail overlay
+            overlay.style.display = 'none';
         }
 
         // FAQ Logic
