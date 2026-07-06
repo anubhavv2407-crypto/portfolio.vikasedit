@@ -68,8 +68,21 @@
 
         /* Fix Stacking Cards rendering */
         .work-card { will-change: transform; background: #000; }
-        .video-wrapper { position: relative; width: 100%; height: 100%; z-index: 5; }
+        .video-wrapper { position: relative; width: 100%; height: 100%; z-index: 5; background: #000; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .play-overlay { background-color: #111; }
+        .play-overlay img { background-color: #111; }
+
+        /* IG Reels Marquee (Smoother & Slower) */
+        .ig-marquee-container { overflow: hidden; position: relative; width: 100%; }
+        .ig-marquee { display: flex; gap: 24px; width: max-content; animation: ig-scroll 60s linear infinite; will-change: transform; }
+        .ig-marquee:hover { animation-play-state: paused; }
+        @keyframes ig-scroll { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(calc(-50% - 12px)); } /* -12px to account for half the gap to make it perfectly seamless */
+        }
+        .ig-card { width: 320px; height: 568px; flex-shrink: 0; background: #fff; border-radius: 1.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .ig-card iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body class="selection:bg-[#ea580c] selection:text-white">
@@ -351,10 +364,8 @@
                     <!-- Project 1 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-10 overflow-hidden">
                         <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
-                            <div class="video-wrapper">
-                                <iframe id="iframe1" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                            </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe1', 'lG9X64PBL9s', this)">
+                            <div class="video-wrapper"><iframe id="iframe1" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center" onclick="playVideo('iframe1', 'lG9X64PBL9s', this)">
                                 <img src="https://img.youtube.com/vi/lG9X64PBL9s/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/lG9X64PBL9s/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
                                 <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
@@ -366,10 +377,8 @@
                     <!-- Project 2 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-20 overflow-hidden">
                         <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
-                            <div class="video-wrapper">
-                                <iframe id="iframe2" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                            </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe2', 'fPBbNYIX_AQ', this)">
+                            <div class="video-wrapper"><iframe id="iframe2" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center" onclick="playVideo('iframe2', 'fPBbNYIX_AQ', this)">
                                 <img src="https://img.youtube.com/vi/fPBbNYIX_AQ/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/fPBbNYIX_AQ/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
                                 <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
@@ -381,10 +390,8 @@
                     <!-- Project 3 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-30 overflow-hidden">
                         <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
-                            <div class="video-wrapper">
-                                <iframe id="iframe3" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                            </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe3', 'gcZV7XHHUZU', this)">
+                            <div class="video-wrapper"><iframe id="iframe3" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center" onclick="playVideo('iframe3', 'gcZV7XHHUZU', this)">
                                 <img src="https://img.youtube.com/vi/gcZV7XHHUZU/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/gcZV7XHHUZU/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
                                 <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
@@ -396,10 +403,8 @@
                     <!-- Project 4 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-40 overflow-hidden">
                         <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
-                            <div class="video-wrapper">
-                                <iframe id="iframe4" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                            </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe4', 'Lby8e8YZUw4', this)">
+                            <div class="video-wrapper"><iframe id="iframe4" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center" onclick="playVideo('iframe4', 'Lby8e8YZUw4', this)">
                                 <img src="https://img.youtube.com/vi/Lby8e8YZUw4/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/Lby8e8YZUw4/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
                                 <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
@@ -411,10 +416,8 @@
                     <!-- Project 5 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-50 overflow-hidden">
                         <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
-                            <div class="video-wrapper">
-                                <iframe id="iframe5" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                            </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe5', 'LihED73oz80', this)">
+                            <div class="video-wrapper"><iframe id="iframe5" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center" onclick="playVideo('iframe5', 'LihED73oz80', this)">
                                 <img src="https://img.youtube.com/vi/LihED73oz80/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/LihED73oz80/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
                                 <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
@@ -426,10 +429,8 @@
                     <!-- Project 6 -->
                     <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full z-[60] overflow-hidden">
                         <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/10">
-                            <div class="video-wrapper">
-                                <iframe id="iframe6" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                            </div>
-                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center bg-black" onclick="playVideo('iframe6', 'ztRvrYn1AJk', this)">
+                            <div class="video-wrapper"><iframe id="iframe6" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+                            <div class="play-overlay absolute inset-0 z-20 cursor-pointer flex items-center justify-center" onclick="playVideo('iframe6', 'ztRvrYn1AJk', this)">
                                 <img src="https://img.youtube.com/vi/ztRvrYn1AJk/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/ztRvrYn1AJk/hqdefault.jpg';" class="absolute inset-0 w-full h-full object-cover opacity-80" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
                                 <div class="relative w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-500 hover:scale-110 hover:bg-[#ea580c] hover:border-[#ea580c]"><i data-lucide="play" class="w-8 h-8 md:w-12 md:h-12 text-white fill-white ml-2"></i></div>
@@ -469,7 +470,73 @@
                 </div>
             </section>
 
-            <!-- 10. The Process -->
+            <!-- 10. Vedonyx Instagram Showcase Section (UPDATED TEXT & REMOVED BUTTON) -->
+            <section id="vedonyx-reels" class="py-24 md:py-32 bg-[#020000] border-t border-neutral-900 relative overflow-hidden">
+                <div class="container mx-auto px-6 md:px-12 max-w-[1400px] relative z-10 text-center mb-12 md:mb-16">
+                    <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs mb-4 gsap-reveal opacity-0 translate-y-[50px]">Managed & Edited by Vikas</p>
+                    <h2 class="text-5xl md:text-7xl font-heading text-white uppercase tracking-wider leading-none mb-6 gsap-reveal opacity-0 translate-y-[50px]">
+                        VEDONYX <span class="text-[#ea580c]">INSTAGRAM</span>
+                    </h2>
+                    <p class="text-neutral-400 text-lg font-medium leading-relaxed max-w-2xl mx-auto gsap-reveal opacity-0 translate-y-[50px]">
+                        I personally manage and edit all the video content for Vedonyx's Instagram. Here is a showcase of the reels driving massive engagement.
+                    </p>
+                </div>
+
+                <div class="ig-marquee-container relative w-full overflow-hidden">
+                    <!-- Fade Edges -->
+                    <div class="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#020000] to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#020000] to-transparent z-10 pointer-events-none"></div>
+                    
+                    <div class="ig-marquee">
+                        <!-- Reel 1 -->
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DThyciLDwTa/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <!-- Reel 2 -->
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DSe8bMUD1J7/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <!-- Reel 3 -->
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DTcq0o3Eig3/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <!-- Reel 4 -->
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DYhiqDYP1Q2/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <!-- Reel 5 -->
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DY4NhB0Pkwp/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <!-- Reel 6 -->
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DYhdRXePaJR/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+
+                        <!-- Duplicate for Infinite Scroll -->
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DThyciLDwTa/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DSe8bMUD1J7/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DTcq0o3Eig3/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DYhiqDYP1Q2/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DY4NhB0Pkwp/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                        <div class="ig-card hover-trigger">
+                            <iframe src="https://www.instagram.com/reel/DYhdRXePaJR/embed" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 11. The Process -->
             <section id="process" class="py-24 md:py-32 bg-[#0a0a0a] border-t border-neutral-900 relative overflow-hidden">
                 <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none"></div>
                 <div class="container mx-auto px-6 md:px-12 max-w-[1400px] relative z-10">
@@ -518,7 +585,7 @@
                 </div>
             </section>
 
-            <!-- 11. Reviews Marquee -->
+            <!-- 12. Reviews Marquee -->
             <section class="py-20 md:py-40 bg-[#0a0a0a] border-t border-neutral-900 overflow-hidden relative z-20">
                 <div class="container mx-auto px-6 text-center mb-20"><h2 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Client <span class="text-[#ea580c]">Reviews</span></h2></div>
                 <div class="relative w-full flex overflow-hidden">
@@ -534,7 +601,7 @@
                 </div>
             </section>
 
-            <!-- 12. FAQs -->
+            <!-- 13. FAQs -->
             <section class="py-40 bg-[#0a0a0a] border-t border-neutral-900 z-20 relative">
                 <div class="container mx-auto px-6 max-w-[800px]">
                     <div class="text-center mb-20"><h2 class="text-5xl md:text-6xl font-heading tracking-wider text-white uppercase">FAQ<span class="text-[#ea580c]">S</span></h2></div>
@@ -563,7 +630,7 @@
         </main>
     </div>
 
-    <!-- 13. Footer (Sticky Reveal) -->
+    <!-- 14. Footer (Sticky Reveal) -->
     <footer class="fixed bottom-0 left-0 w-full h-[80vh] md:h-[90vh] bg-[#020000] text-white z-0 flex flex-col justify-between pt-24 pb-10 px-6 md:px-12 overflow-hidden border-t border-[#ea580c]/10">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[150vw] md:w-[100vw] h-[100vw] bg-[#ea580c]/[0.05] rounded-full blur-[150px] pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-[#c23300]/10 to-transparent pointer-events-none"></div>
@@ -678,7 +745,6 @@
                 if (i < cards.length - 1) {
                     gsap.to(card, {
                         scale: 0.85, 
-                        // NO opacity or filter changes to prevent iframe black screen bug
                         transformOrigin: "top center",
                         scrollTrigger: {
                             trigger: cards[i+1], 
@@ -696,14 +762,29 @@
                     { y: 0, opacity: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 90%" } }
                 );
             });
+
+            // --- AUTOMATIC PAUSE ON SCROLL LOGIC ---
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const card = entry.target;
+                    const iframe = card.querySelector('iframe');
+                    const overlay = card.querySelector('.play-overlay');
+                    if (!entry.isIntersecting && iframe && iframe.src !== '') {
+                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                        if (overlay) overlay.style.display = 'flex';
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            document.querySelectorAll('.work-card').forEach(card => {
+                videoObserver.observe(card);
+            });
         }
 
         // --- SIMPLE CLICK TO PLAY LOGIC ---
         window.playVideo = function(iframeId, videoId, overlay) {
             const iframe = document.getElementById(iframeId);
-            // Load the iframe with autoplay enabled
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
-            // Hide the thumbnail overlay
+            iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1&rel=0&modestbranding=1`;
             overlay.style.display = 'none';
         }
 
