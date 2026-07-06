@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#0a0a0a] text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vikas. | Pro Video Editor</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#ea580c', dark: '#0a0a0a', darker: '#020000' },
+                    fontFamily: { heading: ['Anton', 'sans-serif'], sans: ['Manrope', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom Styles & Utilities */
+        body { font-family: 'Manrope', sans-serif; cursor: none; overflow-x: hidden; background-color: #0a0a0a; color: white;}
+        .font-heading { font-family: 'Anton', sans-serif; letter-spacing: 0.02em; font-weight: 400; }
+        .tracking-tighter { letter-spacing: -0.05em !important; }
+        .stroke-text { -webkit-text-stroke: 1.5px rgba(255,255,255,0.15); color: transparent; }
+        .perspective-1000 { perspective: 1000px; }
+        
+        a, button, .hover-trigger { cursor: none; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0.03; mix-blend-mode: screen;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Cursor */
+        #custom-cursor {
+            position: fixed; top: 0; left: 0; width: 20px; height: 20px; border: 1px solid #ea580c; border-radius: 50%;
+            pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #custom-cursor.hovering { width: 80px; height: 80px; background-color: rgba(234,88,12,0.1); }
+        #custom-cursor .dot { width: 8px; height: 8px; background-color: #ea580c; border-radius: 50%; opacity: 0; transition: opacity 0.2s; }
+        #custom-cursor.hovering .dot { opacity: 1; }
+
+        /* Lenis smooth scroll fix for sticky */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+        /* Marquee Animation */
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 20s linear infinite; }
+
+        /* Video Aspect Ratio Fix for Embeds */
+        .video-container { position: relative; width: 100%; height: 100%; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body class="selection:bg-[#ea580c] selection:text-white">
+
+    <!-- 1. Premium Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[200] bg-[#0a0a0a] flex flex-col items-center justify-center pointer-events-none">
+        <div class="overflow-hidden flex items-end gap-1 md:gap-2 relative px-4 text-[#ea580c] font-heading text-6xl md:text-9xl font-black tracking-tighter leading-none">
+            <span class="pre-char translate-y-[110%] skew-y-12 opacity-0 block">V</span>
+            <span class="pre-char translate-y-[110%] skew-y-12 opacity-0 block">I</span>
+            <span class="pre-char translate-y-[110%] skew-y-12 opacity-0 block">K</span>
+            <span class="pre-char translate-y-[110%] skew-y-12 opacity-0 block">A</span>
+            <span class="pre-char translate-y-[110%] skew-y-12 opacity-0 block">S</span>
+            <div id="pre-dot" class="w-3 h-3 md:w-5 md:h-5 bg-white rounded-full mb-3 md:mb-6 scale-0 opacity-0"></div>
+        </div>
+        <div class="mt-8 md:mt-12 w-48 md:w-64 h-[2px] bg-white/10 overflow-hidden relative rounded-full">
+            <div id="pre-bar" class="absolute top-0 left-0 h-full bg-[#ea580c] w-0"></div>
+        </div>
+        <div id="pre-text" class="mt-4 flex items-center gap-2 opacity-0 translate-y-2">
+            <span class="text-neutral-500 text-[10px] md:text-xs uppercase tracking-[0.3em] font-medium">Portfolio 2026</span>
+        </div>
+    </div>
+
+    <!-- UI Overlays -->
+    <div class="noise-overlay"></div>
+    <div id="custom-cursor" class="hidden md:flex"><div class="dot"></div></div>
+
+    <!-- Main Wrapper -->
+    <div class="relative z-10 bg-[#0a0a0a] mb-[80vh] md:mb-[90vh] shadow-[0_30px_60px_rgba(0,0,0,1)]">
+        
+        <!-- Navbar -->
+        <nav id="navbar" class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-6 py-6 md:px-12 text-white bg-gradient-to-b from-[#0a0a0a]/90 to-transparent backdrop-blur-sm -translate-y-full opacity-0">
+            <div class="text-2xl md:text-3xl tracking-wide uppercase font-heading hover-trigger cursor-pointer">
+                VIKAS<span class="text-[#ea580c]">.</span>
+            </div>
+            <div class="hidden md:flex gap-10 text-xs font-bold tracking-[0.2em] uppercase">
+                <a href="#work" class="hover:text-primary transition-colors hover-trigger">Work</a>
+                <a href="#about" class="hover:text-primary transition-colors hover-trigger">About</a>
+                <a href="#services" class="hover:text-primary transition-colors hover-trigger">Services</a>
+                <a href="#vedonyx" class="hover:text-primary transition-colors hover-trigger">Agency</a>
+                <a href="#process" class="hover:text-primary transition-colors hover-trigger">Process</a>
+            </div>
+            <a href="https://wa.me/918287293938?text=Hi%20I%20just%20viewed%20your%20portfolio.%20I%27d%20like%20to%20discuss%20a%20video%20editing%20project." target="_blank" class="hidden md:block px-8 py-3 border border-white/20 rounded-full text-xs font-bold hover:bg-white hover:text-black transition-colors duration-500 uppercase tracking-widest hover-trigger">
+                Let's Talk
+            </a>
+            <div class="md:hidden text-[#ea580c] hover-trigger">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </div>
+        </nav>
+
+        <main>
+            <!-- 2. Hero Section -->
+            <section id="hero" class="relative h-screen w-full bg-[#0a0a0a] flex flex-col justify-center overflow-hidden z-20">
+                <div class="absolute top-[10%] left-1/2 -translate-x-1/2 w-[70vw] h-[70vw] bg-[#ea580c]/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
+                
+                <div class="container mx-auto px-6 md:px-12 relative z-10 w-full flex flex-col justify-center flex-grow">
+                    <div class="w-full max-w-[1400px] mx-auto">
+                        <div class="relative w-full">
+                            <h1 class="gsap-hero text-[17vw] leading-[0.8] font-heading text-[#d4d4d4] uppercase tracking-tighter opacity-0 translate-y-10">PORTFOLIO</h1>
+                            <div class="gsap-hero-badge opacity-0 scale-50 absolute top-[2%] right-0 md:top-[5%] md:right-[2%] lg:right-[5%] bg-[#ea580c] text-black text-[10px] md:text-sm font-bold px-4 py-1 md:px-6 md:py-2 rounded-full tracking-widest">2026</div>
+                        </div>
+
+                        <div class="gsap-hero-line opacity-0 flex items-center justify-between text-[10px] md:text-xs text-neutral-500 uppercase tracking-[0.2em] mt-6 w-0">
+                            <span class="whitespace-nowrap">Video Editor</span>
+                            <div class="flex-1 h-[1px] bg-neutral-800 mx-4 md:mx-8"></div>
+                            <span class="whitespace-nowrap">Vikas</span>
+                        </div>
+                    </div>
+
+                    <div class="gsap-hero-bottom opacity-0 translate-y-10 w-full max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 mt-20 md:mt-32">
+                        <div class="flex flex-col gap-4">
+                            <div>
+                                <h3 class="text-[#ea580c] font-bold text-sm md:text-base tracking-widest uppercase">Vikas</h3>
+                                <p class="text-neutral-400 text-sm md:text-base">Pro Video Editor</p>
+                            </div>
+                            <p class="text-neutral-500 text-sm max-w-sm leading-relaxed mt-4 font-medium">This portfolio showcases some of my best video editing projects and cinematic work. We don't just edit videos; we engineer emotions.</p>
+                        </div>
+                        <div class="flex flex-col justify-end text-left md:text-right text-xs md:text-sm text-neutral-600 gap-2 tracking-wide">
+                            <p>Animations by GSAP & Lenis</p>
+                            <p>Typography by Google Fonts</p>
+                            <p>Designed with Intent</p>
+                            <p class="mt-4">Copyright © 2026 Vikas</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Steady Marquee Tape -->
+            <div class="bg-[#ea580c] py-4 md:py-5 overflow-hidden flex whitespace-nowrap -rotate-2 scale-110 relative z-10 border-y border-black/20 mt-10">
+                <div class="animate-marquee gap-10 items-center text-black font-heading text-3xl md:text-6xl uppercase tracking-widest">
+                    <span>• YOUTUBE RETENTION</span><span>• CINEMATIC LOOK</span><span>• PERFECT PACING</span><span>• SOUND DESIGN</span><span>• COLOR GRADING</span>
+                    <span>• YOUTUBE RETENTION</span><span>• CINEMATIC LOOK</span><span>• PERFECT PACING</span><span>• SOUND DESIGN</span><span>• COLOR GRADING</span>
+                </div>
+            </div>
+
+            <!-- 4. Showreel -->
+            <section id="showreel-sec" class="h-[100vh] md:h-[130vh] w-full bg-[#0a0a0a] flex items-center justify-center relative py-20 overflow-hidden">
+                <div id="sr-text" class="absolute top-20 left-0 w-full text-center z-0 pointer-events-none opacity-0 translate-y-[100px]">
+                    <h2 class="text-[20vw] font-heading tracking-widest text-white uppercase whitespace-nowrap stroke-text">SHOWREEL</h2>
+                </div>
+                <div id="sr-video" class="relative w-full h-[60vh] md:h-full max-w-[1800px] overflow-hidden group hover-trigger cursor-none shadow-[0_0_100px_rgba(0,0,0,1)] z-10 rounded-[60px] scale-75">
+                    <div id="sr-overlay" class="absolute inset-0 bg-[#0a0a0a] z-15 pointer-events-none opacity-80"></div>
+                    <div class="absolute inset-0 bg-black/40 z-10 transition-opacity duration-1000 group-hover:bg-black/10"></div>
+                    
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 md:w-32 md:h-32 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 transition-transform duration-700 ease-[0.16,1,0.3,1] group-hover:scale-125 group-hover:bg-[#ea580c]">
+                        <i data-lucide="play" class="w-6 h-6 md:w-12 md:h-12 text-white fill-white ml-2"></i>
+                    </div>
+
+                    <div class="absolute bottom-0 left-0 w-full p-8 md:p-16 z-20 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col md:flex-row justify-between items-end">
+                        <div>
+                            <h3 class="text-3xl md:text-7xl font-heading text-white uppercase tracking-wider mb-2">The Showreel.</h3>
+                            <p class="text-[#ea580c] font-bold tracking-[0.2em] uppercase text-xs md:text-sm">Pacing. Story. Retention.</p>
+                        </div>
+                        <div class="hidden md:flex gap-16 text-center">
+                            <div>
+                                <div class="text-5xl font-heading tracking-wide text-white">5M+</div>
+                                <div class="text-xs text-neutral-400 tracking-[0.2em] uppercase mt-2">Views Generated</div>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover transform scale-105 group-hover:scale-100 transition-transform duration-[2s] ease-out" />
+                </div>
+            </section>
+
+            <!-- 5. About Section -->
+            <section id="about" class="py-24 md:py-48 bg-[#0a0a0a] text-white relative border-t border-neutral-900 overflow-hidden">
+                <div id="hello-bg" class="absolute top-10 md:top-20 left-0 whitespace-nowrap pointer-events-none z-0 flex items-center w-full will-change-transform opacity-10" style="-webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
+                    <h2 class="text-[30vw] font-heading leading-none text-white tracking-widest select-none translate-x-[50%]">HELLO HELLO HELLO HELLO</h2>
+                </div>
+
+                <div class="container mx-auto px-6 md:px-12 max-w-[1400px] relative z-10">
+                    <div class="flex flex-col lg:flex-row items-center gap-16 md:gap-24">
+                        <div id="about-img" class="w-full lg:w-1/2 relative will-change-transform translate-y-[100px]">
+                            <div class="absolute inset-0 bg-[#ea580c] blur-[100px] md:blur-[120px] opacity-20 rounded-full"></div>
+                            <div class="relative aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-10">
+                                <img src="https://iili.io/q9hpK7V.jpg" class="w-full h-full grayscale hover:grayscale-0 transition-all duration-700 object-cover scale-110" />
+                            </div>
+                        </div>
+                        <div class="w-full lg:w-1/2 flex flex-col justify-center z-10">
+                            <div class="overflow-hidden"><h2 class="gsap-reveal text-5xl md:text-6xl lg:text-[6rem] font-heading leading-[0.9] text-white tracking-wider uppercase mb-10 translate-y-[100%]">MY NAME IS <br/><span class="text-[#ea580c]">VIKAS</span>.</h2></div>
+                            <div class="space-y-6 text-base md:text-xl text-neutral-400 font-medium border-l-2 border-[#ea580c]/30 pl-6 md:pl-8 py-2">
+                                <div class="overflow-hidden"><p class="gsap-reveal translate-y-[100%]">People in the industry call me the edit master. I am a Video Editor based in India. I have been working as a freelance video editor for about 5 years.</p></div>
+                                <div class="overflow-hidden"><p class="gsap-reveal translate-y-[100%]">I take ordinary raw footage and breathe life into it, ensuring viewers cannot take their eyes off the screen. My expertise lies in pacing and storytelling.</p></div>
+                                <div class="overflow-hidden"><p class="gsap-reveal text-white italic translate-y-[100%]">"Every frame tells a story on its own."</p></div>
+                            </div>
+                            <div class="flex flex-col gap-4 mt-12">
+                                <div class="flex items-center gap-3 text-neutral-400 hover:text-white transition-colors duration-300 hover-trigger">
+                                    <i data-lucide="mail" class="w-5 h-5 text-[#ea580c]"></i>
+                                    <a href="mailto:vikasclan8@gmail.com" class="font-bold text-sm md:text-base tracking-wide">vikasclan8@gmail.com</a>
+                                </div>
+                                <div class="flex items-center gap-3 text-neutral-400 hover:text-white transition-colors duration-300 hover-trigger">
+                                    <i data-lucide="phone" class="w-5 h-5 text-[#ea580c]"></i>
+                                    <a href="tel:+918287293938" class="font-bold text-sm md:text-base tracking-wide">+91 82872 93938</a>
+                                </div>
+                                <div class="flex flex-wrap gap-4 mt-4">
+                                    <a href="https://wa.me/918287293938?text=Hi%20I%20just%20viewed%20your%20portfolio.%20I%27d%20like%20to%20discuss%20a%20video%20editing%20project." target="_blank" class="bg-[#0f0f0f] border border-neutral-800 text-white hover:border-[#ea580c] hover:bg-[#ea580c] hover:text-black font-bold px-6 py-3 md:px-8 md:py-4 rounded-full text-xs transition-all duration-300 hover-trigger flex items-center gap-2">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp Me
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. Services & Capabilities -->
+            <section id="services" class="py-24 md:py-32 bg-[#0a0a0a] border-t border-neutral-900 relative overflow-hidden">
+                <div class="container mx-auto px-6 md:px-12 max-w-[1400px] relative z-10">
+                    <div class="mb-16 md:mb-24 max-w-2xl">
+                        <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs mb-4 gsap-reveal opacity-0 translate-y-[50px]">What I Do</p>
+                        <h2 class="text-5xl md:text-7xl font-heading text-white uppercase tracking-wider leading-none mb-6 gsap-reveal opacity-0 translate-y-[50px]">
+                            Services & <br/> <span class="text-[#ea580c]">Capabilities</span>
+                        </h2>
+                        <p class="text-neutral-400 text-lg font-medium leading-relaxed gsap-reveal opacity-0 translate-y-[50px]">
+                            From raw footage to final render, I provide end-to-end video editing solutions tailored for creators, brands, and agencies.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Service 1 -->
+                        <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center mb-6">
+                                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="#ef4444">
+                                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.5v-7l6 3.5z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">YouTube Retention</h3>
+                            <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Fast-paced, engaging edits specifically designed to maximize viewer retention and algorithm push.</p>
+                            
+                            <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-red-600 rounded-md flex items-center justify-center">
+                                        <i data-lucide="play" class="w-4 h-4 text-white fill-white"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="h-2 w-24 bg-neutral-700 rounded-full"></div>
+                                        <div class="h-2 w-16 bg-neutral-800 rounded-full mt-1.5"></div>
+                                    </div>
+                                </div>
+                                <div class="relative h-10 w-full flex items-end gap-1">
+                                    <div class="w-full h-full bg-neutral-800 absolute rounded-md"></div>
+                                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
+                                        <path d="M0,35 Q10,5 20,15 T40,20 T60,10 T80,25 T100,15" fill="none" stroke="#ea580c" stroke-width="2" />
+                                        <path d="M0,35 Q10,5 20,15 T40,20 T60,10 T80,25 T100,15 L100,40 L0,40 Z" fill="url(#grad1)" opacity="0.3" />
+                                        <defs>
+                                            <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" />
+                                                <stop offset="100%" style="stop-color:#ea580c;stop-opacity:0" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                </div>
+                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                                    <span>Avg View Duration</span>
+                                    <span class="text-[#ea580c]">85% Retained</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service 2 -->
+                        <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
+                                <i data-lucide="film" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">Cinematic Edits</h3>
+                            <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Documentary-style or short film edits with dramatic pacing, music sync, and narrative flow.</p>
+                            
+                            <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
+                                <div class="flex items-end gap-2 h-12">
+                                    <div class="w-4 h-6 bg-neutral-700 rounded-sm"></div>
+                                    <div class="w-4 h-10 bg-[#ea580c]/50 rounded-sm"></div>
+                                    <div class="w-4 h-8 bg-neutral-700 rounded-sm"></div>
+                                    <div class="w-4 h-12 bg-[#ea580c] rounded-sm"></div>
+                                    <div class="w-4 h-4 bg-neutral-700 rounded-sm"></div>
+                                    <div class="w-4 h-9 bg-[#ea580c]/30 rounded-sm"></div>
+                                    <div class="w-4 h-11 bg-neutral-700 rounded-sm"></div>
+                                    <div class="w-4 h-7 bg-neutral-700 rounded-sm"></div>
+                                </div>
+                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                                    <span>Sequence Sync</span>
+                                    <span class="text-[#ea580c]">24 FPS</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service 3 -->
+                        <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
+                                <i data-lucide="palette" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">Color Grading</h3>
+                            <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Professional color correction and cinematic grading to give your footage a high-end, premium look.</p>
+                            
+                            <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
+                                <div class="flex items-center justify-around mb-2">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-red-900 via-neutral-800 to-red-500 border-2 border-[#ea580c]/30 shadow-inner"></div>
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-900 via-neutral-800 to-green-500 border-2 border-[#ea580c]/30 shadow-inner"></div>
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-900 via-neutral-800 to-blue-500 border-2 border-[#ea580c]/30 shadow-inner"></div>
+                                </div>
+                                <div class="flex justify-between mt-2 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                                    <span>Shadows / Mids / Highs</span>
+                                    <span class="text-[#ea580c]">LUT Applied</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service 4 -->
+                        <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
+                                <i data-lucide="volume-2" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">Sound Design</h3>
+                            <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Immersive sound effects, ambient noise, and perfect audio mixing to elevate the visual experience.</p>
+                            
+                            <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
+                                <div class="flex items-center justify-center gap-1 h-12">
+                                    <div class="w-1 h-4 bg-[#ea580c] rounded-full"></div>
+                                    <div class="w-1 h-8 bg-[#ea580c] rounded-full"></div>
+                                    <div class="w-1 h-12 bg-[#ea580c] rounded-full"></div>
+                                    <div class="w-1 h-6 bg-[#ea580c]/80 rounded-full"></div>
+                                    <div class="w-1 h-10 bg-[#ea580c] rounded-full"></div>
+                                    <div class="w-1 h-3 bg-[#ea580c]/50 rounded-full"></div>
+                                    <div class="w-1 h-9 bg-[#ea580c] rounded-full"></div>
+                                    <div class="w-1 h-7 bg-[#ea580c]/70 rounded-full"></div>
+                                    <div class="w-1 h-11 bg-[#ea580c] rounded-full"></div>
+                                    <div class="w-1 h-5 bg-[#ea580c]/40 rounded-full"></div>
+                                    <div class="w-1 h-8 bg-[#ea580c] rounded-full"></div>
+                                    <div class="w-1 h-12 bg-[#ea580c] rounded-full"></div>
+                                </div>
+                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                                    <span>Audio Mix</span>
+                                    <span class="text-[#ea580c]">-6dB</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service 5 -->
+                        <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
+                                <i data-lucide="sparkles" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">VFX & Motion</h3>
+                            <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">Custom motion graphics, text animations, and visual effects to keep the screen dynamic and alive.</p>
+                            
+                            <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
+                                <div class="relative h-12 w-full flex items-center">
+                                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
+                                        <path d="M0,35 Q50,0 100,35" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4" />
+                                        <circle cx="0" cy="35" r="3" fill="#fff" />
+                                        <circle cx="50" cy="5" r="3" fill="#ea580c" />
+                                        <circle cx="100" cy="35" r="3" fill="#fff" />
+                                    </svg>
+                                </div>
+                                <div class="flex justify-between mt-2 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                                    <span>Motion Path</span>
+                                    <span class="text-[#ea580c]">Keyframed</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service 6 -->
+                        <div class="group p-8 bg-[#0f0f0f] border border-neutral-800 rounded-3xl hover:border-[#ea580c]/50 hover:bg-[#111] transition-all duration-500 gsap-reveal opacity-0 translate-y-[50px] flex flex-col">
+                            <div class="w-14 h-14 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-2xl flex items-center justify-center text-[#ea580c] mb-6">
+                                <i data-lucide="target" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-heading text-white mb-3 uppercase tracking-wide">Ad Campaigns</h3>
+                            <p class="text-neutral-400 text-base font-medium leading-relaxed mb-6">High-converting video ads for Facebook, Instagram, and YouTube, optimized for marketing goals.</p>
+                            
+                            <div class="mt-auto bg-[#0a0a0a] border border-neutral-800 rounded-xl p-4 group-hover:border-neutral-700 transition-colors">
+                                <div class="flex items-end gap-2 h-12 justify-center">
+                                    <div class="w-10 h-4 bg-neutral-700 rounded-sm"></div>
+                                    <div class="w-10 h-6 bg-neutral-600 rounded-sm"></div>
+                                    <div class="w-10 h-8 bg-neutral-500 rounded-sm"></div>
+                                    <div class="w-10 h-12 bg-[#ea580c] rounded-sm"></div>
+                                </div>
+                                <div class="flex justify-between mt-3 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                                    <span>Conversion</span>
+                                    <span class="text-[#ea580c]">3x ROAS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. Stats / Achievements -->
+            <section class="py-20 md:py-24 bg-[#020000] border-t border-neutral-900 relative overflow-hidden">
+                <div class="container mx-auto px-6 md:px-12 max-w-[1400px] relative z-10">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
+                        <div class="gsap-reveal opacity-0 translate-y-[50px]">
+                            <div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">500+</div>
+                            <div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Videos Delivered</div>
+                        </div>
+                        <div class="gsap-reveal opacity-0 translate-y-[50px]">
+                            <div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">5+</div>
+                            <div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Years Experience</div>
+                        </div>
+                        <div class="gsap-reveal opacity-0 translate-y-[50px]">
+                            <div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">10M+</div>
+                            <div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Total Views</div>
+                        </div>
+                        <div class="gsap-reveal opacity-0 translate-y-[50px]">
+                            <div class="text-5xl md:text-7xl font-heading text-[#ea580c] tracking-wider mb-2">120+</div>
+                            <div class="text-neutral-400 text-xs md:text-sm uppercase tracking-widest font-bold">Happy Clients</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. Selected Works (With Real Video & IG Embeds - FIXED) -->
+            <section id="work" class="bg-[#0a0a0a] border-t border-neutral-900 relative pb-[50vh]">
+                <div class="absolute top-20 left-0 w-full text-center pointer-events-none z-10">
+                    <h2 class="text-5xl md:text-[8rem] font-heading tracking-wider text-white leading-none uppercase">SELECTED <br/> <span class="text-[#ea580c]">WORKS</span></h2>
+                    <p class="text-neutral-400 mt-4 text-sm md:text-lg font-medium tracking-wide">Scroll down to explore.</p>
+                </div>
+
+                <div class="pt-20">
+                    <!-- Project 1 -->
+                    <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full origin-top z-10">
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_-10px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-black">
+                            <div class="video-container">
+                                <iframe src="https://www.youtube.com/embed/lG9X64PBL9?autoplay=1&mute=1&loop=1&playlist=lG9X64PBL9&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+                            <div class="absolute bottom-8 left-6 md:bottom-16 md:left-16 z-10 pointer-events-none">
+                                <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
+                                <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Alpha</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full origin-top z-20">
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_-10px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-black">
+                            <div class="video-container">
+                                <iframe src="https://www.youtube.com/embed/fPBbNYIX_AQ?autoplay=1&mute=1&loop=1&playlist=fPBbNYIX_AQ&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+                            <div class="absolute bottom-8 left-6 md:bottom-16 md:left-16 z-10 pointer-events-none">
+                                <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
+                                <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Beta</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full origin-top z-30">
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_-10px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-black">
+                            <div class="video-container">
+                                <iframe src="https://www.youtube.com/embed/gcZV7XHHUZU?autoplay=1&mute=1&loop=1&playlist=gcZV7XHHUZU&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+                            <div class="absolute bottom-8 left-6 md:bottom-16 md:left-16 z-10 pointer-events-none">
+                                <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
+                                <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Gamma</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full origin-top z-40">
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_-10px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-black">
+                            <div class="video-container">
+                                <iframe src="https://www.youtube.com/embed/Lby8e8YZUw4?autoplay=1&mute=1&loop=1&playlist=Lby8e8YZUw4&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+                            <div class="absolute bottom-8 left-6 md:bottom-16 md:left-16 z-10 pointer-events-none">
+                                <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
+                                <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Delta</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 5 -->
+                    <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full origin-top z-50">
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_-10px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-black">
+                            <div class="video-container">
+                                <iframe src="https://www.youtube.com/embed/LihED73oz80?autoplay=1&mute=1&loop=1&playlist=LihED73oz80&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+                            <div class="absolute bottom-8 left-6 md:bottom-16 md:left-16 z-10 pointer-events-none">
+                                <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-2">YouTube Video</p>
+                                <h3 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Project Epsilon</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 6 (Instagram Reel) -->
+                    <div class="work-card-container sticky top-0 flex justify-center items-center h-screen w-full origin-top z-[60]">
+                        <div class="work-card relative w-[90vw] md:w-[80vw] h-[60vh] md:h-[75vh] overflow-hidden rounded-3xl hover-trigger shadow-[0_-10px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-black flex items-center justify-center p-4 md:p-16">
+                            <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DSe8bMUD1J7/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/reel/DSe8bMUD1J7/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/reel/DSe8bMUD1J7/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by Vedonyx | Website and App Development (@vedonyx)</a></p></div></blockquote>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. Vedonyx Agency Section -->
+            <section id="vedonyx" class="py-24 md:py-32 bg-[#0a0a0a] border-t border-neutral-900 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1/3 h-full bg-[#ea580c]/[0.03] blur-[120px] pointer-events-none"></div>
+                <div class="container mx-auto px-6 md:px-12 max-w-[1400px] relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="lg:sticky lg:top-24">
+                            <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs mb-4 gsap-reveal opacity-0 translate-y-[50px]">Agency Experience</p>
+                            <h2 class="text-6xl md:text-8xl font-heading text-white uppercase tracking-wider leading-none mb-8 gsap-reveal opacity-0 translate-y-[50px]">
+                                HEAD OF <br/> <span class="text-[#ea580c]">VIDEO</span> <br/> EDITING
+                            </h2>
+                            <p class="text-neutral-400 text-lg font-medium leading-relaxed max-w-md gsap-reveal opacity-0 translate-y-[50px]">
+                                Leading the creative charge at a top-tier agency. Proven track record of delivering high-impact content at scale.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-[#0f0f0f] border border-neutral-800 rounded-3xl p-8 md:p-12 gsap-reveal opacity-0 translate-y-[50px] relative overflow-hidden group hover:border-[#ea580c]/40 transition-colors duration-500">
+                            <div class="absolute -top-10 -right-10 font-heading text-[150px] text-white/[0.02] group-hover:text-[#ea580c]/[0.05] transition-colors duration-500 select-none leading-none">VX</div>
+                            <div class="relative z-10">
+                                <div class="flex items-center justify-between mb-8 pb-8 border-b border-neutral-800">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 bg-[#ea580c] rounded-md flex items-center justify-center text-black font-heading text-2xl">V</div>
+                                        <span class="text-3xl md:text-4xl font-heading text-white tracking-wider">VEDONYX</span>
+                                    </div>
+                                    <a href="https://vedonyx.com" target="_blank" class="text-xs text-neutral-400 hover:text-[#ea580c] transition-colors border border-neutral-700 hover:border-[#ea580c] px-4 py-2 rounded-full font-bold uppercase tracking-widest flex items-center gap-2 hover-trigger">
+                                        Visit <i data-lucide="external-link" class="w-3 h-3"></i>
+                                    </a>
+                                </div>
+                                <p class="text-neutral-300 text-lg md:text-xl leading-relaxed mb-6">
+                                    Currently serving as the <span class="text-[#ea580c] font-bold">Head of Video Editing</span> at Vedonyx, a premier creative agency.
+                                </p>
+                                <p class="text-neutral-400 text-base leading-relaxed mb-8">
+                                    For the past <span class="text-white font-bold">2+ years</span>, I've been steering the video editing department, ensuring top-tier cinematic quality, managing a team of talented editors, and delivering exceptional visual stories for high-profile clients globally.
+                                </p>
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div class="border-l-2 border-[#ea580c] pl-4">
+                                        <div class="text-3xl font-heading text-white">2+ Years</div>
+                                        <div class="text-xs text-neutral-500 uppercase tracking-widest mt-1">Leadership Role</div>
+                                    </div>
+                                    <div class="border-l-2 border-neutral-700 pl-4">
+                                        <div class="text-3xl font-heading text-white">Team Lead</div>
+                                        <div class="text-xs text-neutral-500 uppercase tracking-widest mt-1">Creative Direction</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 10. The Process -->
+            <section id="process" class="py-24 md:py-32 bg-[#0a0a0a] border-t border-neutral-900 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none"></div>
+                <div class="container mx-auto px-6 md:px-12 max-w-[1400px] relative z-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+                        <div class="lg:sticky lg:top-0 lg:h-screen flex flex-col justify-center">
+                            <p class="text-[#ea580c] font-bold tracking-[0.3em] uppercase text-xs mb-4 gsap-reveal opacity-0 translate-y-[50px]">Workflow to Excellence</p>
+                            <h2 class="text-6xl md:text-8xl font-heading text-white uppercase tracking-wider leading-none mb-8 gsap-reveal opacity-0 translate-y-[50px]">
+                                The <br/> <span class="text-[#ea580c]">Process</span>
+                            </h2>
+                            <p class="text-neutral-400 max-w-md text-lg font-medium leading-relaxed gsap-reveal opacity-0 translate-y-[50px]">
+                                A meticulous journey from raw footage to cinematic masterpiece. Every frame is engineered for maximum retention and emotional impact.
+                            </p>
+                            <div class="mt-8 flex items-center gap-4 text-neutral-500 text-sm gsap-reveal opacity-0 translate-y-[50px]">
+                                <div class="h-[2px] w-12 bg-[#ea580c]"></div>
+                                <span class="uppercase tracking-widest font-bold">4 Steps to Perfection</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-6 lg:py-32">
+                            <div class="process-card group relative p-8 md:p-10 bg-[#0f0f0f] border border-neutral-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-[#ea580c]/50 hover:bg-[#111] gsap-reveal opacity-0 translate-y-[50px]">
+                                <div class="absolute -top-6 -right-2 font-heading text-[120px] text-white/[0.03] group-hover:text-[#ea580c]/10 transition-colors duration-500 select-none leading-none">01</div>
+                                <div class="relative z-10">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]">
+                                            <i data-lucide="aperture" class="w-5 h-5"></i>
+                                        </div>
+                                        <span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">01 - DISCOVERY</span>
+                                    </div>
+                                    <h3 class="text-3xl md:text-4xl font-heading text-white mb-4 uppercase tracking-wide">The Blueprint</h3>
+                                    <p class="text-neutral-400 text-base md:text-lg font-medium leading-relaxed">Understanding the raw footage and setting the narrative framework. We define the pacing, tone, and visual style before a single cut is made.</p>
+                                </div>
+                            </div>
+
+                            <div class="process-card group relative p-8 md:p-10 bg-[#0f0f0f] border border-neutral-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-[#ea580c]/50 hover:bg-[#111] gsap-reveal opacity-0 translate-y-[50px]">
+                                <div class="absolute -top-6 -right-2 font-heading text-[120px] text-white/[0.03] group-hover:text-[#ea580c]/10 transition-colors duration-500 select-none leading-none">02</div>
+                                <div class="relative z-10">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]">
+                                            <i data-lucide="zap" class="w-5 h-5"></i>
+                                        </div>
+                                        <span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">02 - PACING</span>
+                                    </div>
+                                    <h3 class="text-3xl md:text-4xl font-heading text-white mb-4 uppercase tracking-wide">Rhythm & Flow</h3>
+                                    <p class="text-neutral-400 text-base md:text-lg font-medium leading-relaxed">Cutting the dead space and establishing a solid, engaging flow. This is where the video finds its heartbeat and keeps the audience hooked.</p>
+                                </div>
+                            </div>
+
+                            <div class="process-card group relative p-8 md:p-10 bg-[#0f0f0f] border border-neutral-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-[#ea580c]/50 hover:bg-[#111] gsap-reveal opacity-0 translate-y-[50px]">
+                                <div class="absolute -top-6 -right-2 font-heading text-[120px] text-white/[0.03] group-hover:text-[#ea580c]/10 transition-colors duration-500 select-none leading-none">03</div>
+                                <div class="relative z-10">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]">
+                                            <i data-lucide="layers" class="w-5 h-5"></i>
+                                        </div>
+                                        <span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">03 - VISUALS</span>
+                                    </div>
+                                    <h3 class="text-3xl md:text-4xl font-heading text-white mb-4 uppercase tracking-wide">Visual Engineering</h3>
+                                    <p class="text-neutral-400 text-base md:text-lg font-medium leading-relaxed">The magic of VFX, motion graphics, and cinematic color grading. We enhance the visual aesthetic to create a truly immersive experience.</p>
+                                </div>
+                            </div>
+
+                            <div class="process-card group relative p-8 md:p-10 bg-[#0f0f0f] border border-neutral-800 rounded-3xl overflow-hidden transition-all duration-500 hover:border-[#ea580c]/50 hover:bg-[#111] gsap-reveal opacity-0 translate-y-[50px]">
+                                <div class="absolute -top-6 -right-2 font-heading text-[120px] text-white/[0.03] group-hover:text-[#ea580c]/10 transition-colors duration-500 select-none leading-none">04</div>
+                                <div class="relative z-10">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-12 h-12 bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-full flex items-center justify-center text-[#ea580c]">
+                                            <i data-lucide="music" class="w-5 h-5"></i>
+                                        </div>
+                                        <span class="text-[#ea580c] font-bold tracking-widest text-xs md:text-sm">04 - SOUND</span>
+                                    </div>
+                                    <h3 class="text-3xl md:text-4xl font-heading text-white mb-4 uppercase tracking-wide">Sonic Immersion</h3>
+                                    <p class="text-neutral-400 text-base md:text-lg font-medium leading-relaxed">Breathing life into the video with SFX, ambient sound, and music. Sound is 50% of the experience, and we make every beat count.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 11. Reviews Marquee -->
+            <section class="py-20 md:py-40 bg-[#0a0a0a] border-t border-neutral-900 overflow-hidden relative z-20">
+                <div class="container mx-auto px-6 text-center mb-20">
+                    <h2 class="text-4xl md:text-7xl font-heading tracking-wider text-white uppercase">Client <span class="text-[#ea580c]">Reviews</span></h2>
+                </div>
+                <div class="relative w-full flex overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none"></div>
+                    <div class="animate-marquee gap-8 px-4 w-max">
+                        <div class="w-[300px] md:w-[450px] flex-shrink-0 bg-[#0f0f0f] p-8 md:p-10 rounded-2xl border border-neutral-800"><div class="flex gap-1 mb-6 text-[#ea580c]"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div><p class="text-neutral-300 text-base md:text-lg font-medium leading-relaxed mb-8">"Vikas's edits increased our channel's retention by 40%. The pacing is phenomenal."</p><div class="flex items-center gap-4"><div class="w-12 h-12 bg-neutral-800 rounded-full"></div><div><h4 class="text-white font-bold tracking-wide">Creator One</h4><p class="text-neutral-500 text-xs uppercase tracking-widest">YouTuber</p></div></div></div>
+                        <div class="w-[300px] md:w-[450px] flex-shrink-0 bg-[#0f0f0f] p-8 md:p-10 rounded-2xl border border-neutral-800"><div class="flex gap-1 mb-6 text-[#ea580c]"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div><p class="text-neutral-300 text-base md:text-lg font-medium leading-relaxed mb-8">"He doesn't just cut clips; he engineers emotions. Truly a cinematic experience."</p><div class="flex items-center gap-4"><div class="w-12 h-12 bg-neutral-800 rounded-full"></div><div><h4 class="text-white font-bold tracking-wide">Brand Studio</h4><p class="text-neutral-500 text-xs uppercase tracking-widest">Agency</p></div></div></div>
+                        <div class="w-[300px] md:w-[450px] flex-shrink-0 bg-[#0f0f0f] p-8 md:p-10 rounded-2xl border border-neutral-800"><div class="flex gap-1 mb-6 text-[#ea580c]"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div><p class="text-neutral-300 text-base md:text-lg font-medium leading-relaxed mb-8">"Our commercial saw a 3x conversion rate after his visual overhaul."</p><div class="flex items-center gap-4"><div class="w-12 h-12 bg-neutral-800 rounded-full"></div><div><h4 class="text-white font-bold tracking-wide">Tech Gear</h4><p class="text-neutral-500 text-xs uppercase tracking-widest">Client</p></div></div></div>
+                        <div class="w-[300px] md:w-[450px] flex-shrink-0 bg-[#0f0f0f] p-8 md:p-10 rounded-2xl border border-neutral-800"><div class="flex gap-1 mb-6 text-[#ea580c]"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div><p class="text-neutral-300 text-base md:text-lg font-medium leading-relaxed mb-8">"Vikas's edits increased our channel's retention by 40%. The pacing is phenomenal."</p><div class="flex items-center gap-4"><div class="w-12 h-12 bg-neutral-800 rounded-full"></div><div><h4 class="text-white font-bold tracking-wide">Creator One</h4><p class="text-neutral-500 text-xs uppercase tracking-widest">YouTuber</p></div></div></div>
+                        <div class="w-[300px] md:w-[450px] flex-shrink-0 bg-[#0f0f0f] p-8 md:p-10 rounded-2xl border border-neutral-800"><div class="flex gap-1 mb-6 text-[#ea580c]"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div><p class="text-neutral-300 text-base md:text-lg font-medium leading-relaxed mb-8">"He doesn't just cut clips; he engineers emotions. Truly a cinematic experience."</p><div class="flex items-center gap-4"><div class="w-12 h-12 bg-neutral-800 rounded-full"></div><div><h4 class="text-white font-bold tracking-wide">Brand Studio</h4><p class="text-neutral-500 text-xs uppercase tracking-widest">Agency</p></div></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 12. FAQs -->
+            <section class="py-40 bg-[#0a0a0a] border-t border-neutral-900 z-20 relative">
+                <div class="container mx-auto px-6 max-w-[800px]">
+                    <div class="text-center mb-20"><h2 class="text-5xl md:text-6xl font-heading tracking-wider text-white uppercase">FAQ<span class="text-[#ea580c]">S</span></h2></div>
+                    <div class="flex flex-col gap-4">
+                        <div class="border-b border-neutral-800 pb-4 overflow-hidden faq-item">
+                            <button class="w-full flex justify-between items-center py-4 text-left hover-trigger" onclick="toggleFaq(this)">
+                                <h3 class="text-lg md:text-xl font-bold transition-colors duration-300 text-white">How long does a typical project take?</h3>
+                                <div class="text-neutral-500 transition-transform duration-300 icon-container"><i data-lucide="plus"></i></div>
+                            </button>
+                            <div class="h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out faq-content">
+                                <p class="text-neutral-400 pb-6 pr-10">Turnaround times vary based on the project scope. A standard YouTube video usually takes 2-4 days, while commercial projects can take 1-2 weeks.</p>
+                            </div>
+                        </div>
+                        <div class="border-b border-neutral-800 pb-4 overflow-hidden faq-item">
+                            <button class="w-full flex justify-between items-center py-4 text-left hover-trigger" onclick="toggleFaq(this)">
+                                <h3 class="text-lg md:text-xl font-bold transition-colors duration-300 text-white">What software do you use?</h3>
+                                <div class="text-neutral-500 transition-transform duration-300 icon-container"><i data-lucide="plus"></i></div>
+                            </button>
+                            <div class="h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out faq-content">
+                                <p class="text-neutral-400 pb-6 pr-10">My primary suite includes Premiere Pro for cutting, After Effects for motion graphics, and DaVinci Resolve for professional color grading.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 13. Footer (Sticky Reveal) -->
+    <footer class="fixed bottom-0 left-0 w-full h-[80vh] md:h-[90vh] bg-[#020000] text-white z-0 flex flex-col justify-between pt-24 pb-10 px-6 md:px-12 overflow-hidden border-t border-[#ea580c]/10">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[150vw] md:w-[100vw] h-[100vw] bg-[#ea580c]/[0.05] rounded-full blur-[150px] pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 w-full h-[60vh] bg-gradient-to-t from-[#c23300]/10 to-transparent pointer-events-none"></div>
+
+        <div class="container mx-auto flex flex-col items-center text-center relative z-10">
+            <p class="font-bold tracking-[0.3em] uppercase mb-4 text-[#ea580c]">Next Step?</p>
+            <h2 class="text-[12vw] leading-none font-heading tracking-wider uppercase mb-8 text-white drop-shadow-[0_0_50px_rgba(234,88,12,0.5)]">LET'S TALK</h2>
+            <p class="text-xl md:text-2xl font-bold max-w-2xl mb-12 text-white/60 tracking-wide">Ready to take your content to the next level? Let's begin the journey.</p>
+            <a href="https://wa.me/918287293938?text=Hi%20I%20just%20viewed%20your%20portfolio.%20I%27d%20like%20to%20discuss%20a%20video%20editing%20project." target="_blank" class="group relative px-10 py-5 bg-[#ea580c] text-black rounded-full overflow-hidden hover-trigger magnetic-btn border border-white/5 shadow-[0_0_40px_rgba(234,88,12,0.4)]">
+                <div class="absolute inset-0 w-full h-full bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-0"></div>
+                <span class="relative z-10 font-bold uppercase tracking-widest text-sm transition-colors duration-500 flex items-center gap-3">Start a Project <i data-lucide="arrow-up-right" class="w-5 h-5"></i></span>
+            </a>
+            
+            <div class="mt-12 flex flex-col md:flex-row items-center gap-6 md:gap-12 text-neutral-400">
+                <a href="mailto:vikasclan8@gmail.com" class="flex items-center gap-2 hover:text-[#ea580c] transition-colors duration-300 hover-trigger">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    <span class="text-sm font-bold tracking-wide">vikasclan8@gmail.com</span>
+                </a>
+                <div class="hidden md:block w-[1px] h-4 bg-neutral-700"></div>
+                <a href="tel:+918287293938" class="flex items-center gap-2 hover:text-[#ea580c] transition-colors duration-300 hover-trigger">
+                    <i data-lucide="phone" class="w-4 h-4"></i>
+                    <span class="text-sm font-bold tracking-wide">+91 82872 93938</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-end border-t border-[#ea580c]/20 pt-8 mt-auto relative z-10">
+            <div class="mb-6 md:mb-0 text-center md:text-left">
+                <p class="font-heading text-5xl tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(234,88,12,0.3)]">VIKAS.</p>
+                <p class="font-bold text-white/40 mt-1 uppercase text-xs tracking-[0.2em]">Visual Engineer © 2026</p>
+            </div>
+            <div class="flex gap-8 font-bold uppercase tracking-[0.2em] text-xs">
+                <a href="https://wa.me/918287293938?text=Hi%20I%20just%20viewed%20your%20portfolio.%20I%27d%20like%20to%20discuss%20a%20video%20editing%20project." target="_blank" class="hover:text-[#ea580c] text-white/60 transition-colors duration-300 hover-trigger">WhatsApp</a>
+                <a href="https://www.instagram.com" target="_blank" class="hover:text-[#ea580c] text-white/60 transition-colors duration-300 hover-trigger">Instagram</a>
+                <a href="https://www.youtube.com" target="_blank" class="hover:text-[#ea580c] text-white/60 transition-colors duration-300 hover-trigger">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- GSAP & Lenis for Smooth Scrolling & Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    
+    <!-- Instagram Embed Script -->
+    <script async src="//www.instagram.com/embed.js"></script>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // 1. Lenis Smooth Scroll
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // 2. Custom Cursor
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1, ease: "power2.out" });
+        });
+        document.querySelectorAll('.hover-trigger, a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+        });
+
+        // 3. Preloader Animation
+        window.addEventListener('load', () => {
+            // Stop scroll during preloader
+            lenis.stop();
+            document.body.style.overflow = 'hidden';
+
+            const tl = gsap.timeline({
+                onComplete: initScrollAnimations // Initialize scroll triggers ONLY after preloader finishes
+            });
+            
+            tl.to('.pre-char', { y: '0%', skewY: 0, opacity: 1, duration: 1.2, stagger: 0.1, ease: "power4.out" })
+              .to('#pre-bar', { width: '100%', duration: 1.5, ease: "power2.inOut" }, "-=1")
+              .to('#pre-dot', { scale: 1, opacity: 1, duration: 0.5, ease: "back.out" }, "-=0.5")
+              .to('#pre-text', { opacity: 1, y: 0, duration: 0.5 }, "-=0.2")
+              .to('#preloader', { y: "-100%", duration: 1, ease: "power4.inOut", delay: 0.5 })
+              .to('#navbar', { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, "-=0.5")
+              .to('.gsap-hero', {y: 0, opacity: 1, duration: 1.2, ease: "power3.out"}, "-=0.5")
+              .to('.gsap-hero-badge', {scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)"}, "-=0.8")
+              .to('.gsap-hero-line', {width: "100%", opacity: 1, duration: 1.5, ease: "power2.out"}, "-=0.8")
+              .to('.gsap-hero-bottom', {y: 0, opacity: 1, duration: 1, ease: "power3.out"}, "-=1");
+
+            // Trigger Instagram embed rendering after preloader
+            setTimeout(() => {
+                if (window.instgrm) {
+                    window.instgrm.Embeds.process();
+                }
+            }, 1500);
+        });
+
+        function initScrollAnimations() {
+            // Start scroll again
+            lenis.start();
+            document.body.style.overflow = '';
+
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero Parallax (Smooth fade instead of erase)
+            gsap.to('.gsap-hero', {
+                y: 100, opacity: 0, 
+                scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 1.5 }
+            });
+            gsap.to('.gsap-hero-badge', {
+                y: 60, opacity: 0,
+                scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 1.5 }
+            });
+            gsap.to('.gsap-hero-bottom', {
+                y: 50, opacity: 0,
+                scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 1.5 }
+            });
+
+            // Showreel Reveal
+            gsap.to('#sr-video', {
+                scale: 1, borderRadius: "0px",
+                scrollTrigger: { trigger: "#showreel-sec", start: "top bottom", end: "center center", scrub: 1 }
+            });
+            gsap.to('#sr-overlay', { opacity: 0, scrollTrigger: { trigger: "#showreel-sec", start: "top bottom", end: "center center", scrub: 1 } });
+            gsap.to('#sr-text', { y: -30, opacity: 0.5, scrollTrigger: { trigger: "#showreel-sec", start: "top bottom", end: "center center", scrub: 1 } });
+
+            // Hello Background Text Slow Scroll (Fixed Speed)
+            gsap.to('#hello-bg h2', {
+                x: "-50%", 
+                scrollTrigger: { trigger: "#about", start: "top bottom", end: "bottom top", scrub: 3 }
+            });
+            gsap.to('#about-img', {
+                y: -100,
+                scrollTrigger: { trigger: "#about", start: "top bottom", end: "bottom top", scrub: 1 }
+            });
+
+            // Stacking Works Cards Effect (Fixed blank iframes)
+            // Removed filter: blur and perspective so cross-origin iframes (YouTube/Insta) render properly!
+            const cards = document.querySelectorAll('.work-card-container');
+            cards.forEach((container, i) => {
+                const card = container.querySelector('.work-card');
+                const targetScale = 1 - ((cards.length - i - 1) * 0.05); 
+                
+                gsap.to(card, {
+                    scale: targetScale, 
+                    opacity: 0.7, 
+                    transformOrigin: "top center",
+                    scrollTrigger: {
+                        trigger: container, 
+                        start: "top top", 
+                        end: "bottom top", 
+                        scrub: 1,
+                    }
+                });
+            });
+
+            // Simple Text Reveals
+            document.querySelectorAll('.gsap-reveal').forEach(el => {
+                gsap.fromTo(el, 
+                    { y: 50, opacity: 0 }, 
+                    { y: 0, opacity: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 90%" } }
+                );
+            });
+        }
+
+        // FAQ Logic
+        window.toggleFaq = function(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('i');
+            const title = btn.querySelector('h3');
+            
+            if(content.classList.contains('h-0')) {
+                content.classList.remove('h-0', 'opacity-0');
+                content.classList.add('h-auto', 'opacity-100');
+                icon.setAttribute('data-lucide', 'minus');
+                title.classList.add('text-[#ea580c]');
+                title.classList.remove('text-white');
+            } else {
+                content.classList.add('h-0', 'opacity-0');
+                content.classList.remove('h-auto', 'opacity-100');
+                icon.setAttribute('data-lucide', 'plus');
+                title.classList.remove('text-[#ea580c]');
+                title.classList.add('text-white');
+            }
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
